@@ -33,7 +33,23 @@ void eventsHandling(CONTROLINT event)
 			break;
 		case DATA_TYPE_UNIDENTIFIED:
 			fprintf(logs,"%s - Falha em [bubbleSort()]. DataType não suportado, não ocorreu ordenação.\n", formattedDateTime());
-			break;	
+			break;
+		case EMPTY_QUEUE	:
+			fprintf(logs,"%s - Falha em [dqueue()]. Tentativa de remoção em FILA vazia.\n", formattedDateTime());
+			break;
+		case QUEUE_NOT_STARTED:
+			fprintf(logs,"%s - Falha em [history.h]. Tentativa de uso de FILA não inicializada.\n", formattedDateTime());
+			redersHistoryFatalError();
+			exit(EXIT_FAILURE);
+			break;
+		case LIST_NOT_STARTED:
+			fprintf(logs,"%s - Falha em [top.h]. Tentativa de uso de LISTA não inicializada.\n", formattedDateTime());
+			redersTop10FatalError();
+			exit(EXIT_FAILURE);
+			break;
+		case LIST_QUEUE:
+			fprintf(logs,"%s - Falha em [top.h]. Tentativa de uso de LISTA vazia.\n", formattedDateTime());
+			break;
 		default:
 			fprintf(logs,"%s - Evento desconhecido\n", formattedDateTime());
 	}

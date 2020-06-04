@@ -70,14 +70,18 @@
 	#define HISTORY_FILE_NAME "db/history.dat"
 	
 	/*event and error settings*/
-	#define STANDARD_EVENT 1111
-	#define CRITICAL_FAILURE 2222
-	#define INCOMPLETE_RECORD 4444
-	#define INCOMPLETE_READING 5555
-	#define REMOVAL_STACK_EMPTY 6666
-	#define GAME_STATUS_UNIDENTIFIED 7777
-	#define DATA_TYPE_UNIDENTIFIED 8888
-
+	#define STANDARD_EVENT 1
+	#define CRITICAL_FAILURE 2
+	#define INCOMPLETE_RECORD 3
+	#define INCOMPLETE_READING 4
+	#define REMOVAL_STACK_EMPTY 5
+	#define GAME_STATUS_UNIDENTIFIED 6
+	#define DATA_TYPE_UNIDENTIFIED 7
+	#define EMPTY_QUEUE 8
+	#define QUEUE_NOT_STARTED 9
+	#define LIST_NOT_STARTED 10
+	#define LIST_QUEUE 11
+	
 	
 	
 	/*color setting*/
@@ -125,8 +129,8 @@
 		SETTINGS settings;
 		
 		char keyboard[BUFSIZ];
-		USER * topPlayers;
-		USER * historyPlayers;
+		NODE ** topPlayers;
+		NODE ** historyPlayers;
 	
 #endif
 
