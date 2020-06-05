@@ -100,7 +100,7 @@ USER userIdExists(const CONTROLINT id)
 	return user;
 }
 */
-USER findUserByUsername(const char * username)
+USER findUserByUsername(char * username)
 {
 	FILE * file = openFile(USERS_FILE_NAME,BINARY_READING);
 	USER user;
@@ -109,7 +109,11 @@ USER findUserByUsername(const char * username)
 	{
 		readData(&user,sizeof(USER),1,file);
 		if(user.id != 0 && strcmp(user.username,username) == 0)
+		{
+			fclose(file);
 			return user;
+		}
+			
 	}
 	while(!feof(file));
 	user = createNullUser();

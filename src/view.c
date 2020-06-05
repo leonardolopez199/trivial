@@ -4,7 +4,7 @@
 CONTROLINT rendersMainMenu(void)
 {
 	CONTROLINT choice;
-	char mainMenu[][MAX_OPTION_MENU_SIZE]={"1 - JOGAR","2 - CADASTRAR USUÁRIO", "3 - TOP 10", "4 - HISTÓRICO", "5 - MINHA CONTA", "0 - SAIR"};
+	char mainMenu[][MAX_OPTION_MENU_SIZE]={"1 - JOGAR","2 - CADASTRAR USUï¿½RIO", "3 - TOP 10", "4 - HISTï¿½RICO", "5 - MINHA CONTA", "0 - SAIR"};
 	
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
@@ -23,7 +23,7 @@ CONTROLINT rendersMainMenu(void)
 CONTROLINT rendersGetGameMode(void)
 {
 	CONTROLINT choice;
-	char menuGameMode[][MAX_OPTION_MENU_SIZE]={"1 - PEQUENO (4 perguntas)", "2 - MÉDIO (8 perguntas)", "3 - GRANDE (16 perguntas)"};
+	char menuGameMode[][MAX_OPTION_MENU_SIZE]={"1 - PEQUENO (4 perguntas)", "2 - Mï¿½DIO (8 perguntas)", "3 - GRANDE (16 perguntas)"};
 	
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
@@ -43,7 +43,7 @@ CONTROLINT rendersGetTotalPlayers(void)
 	
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
-	instructionBox("TOTAL DE JOGADORES","O jogo suporta de 2 a 6 jogadores. Com quantos amigos gostaria de se divertir?","Pressione o número de jogadores para continuar..",STANDARD_BOX,INSTRUCTION_BOX);
+	instructionBox("TOTAL DE JOGADORES","O jogo suporta de 2 a 6 jogadores. Com quantos amigos gostaria de se divertir?","Pressione o nï¿½mero de jogadores para continuar..",STANDARD_BOX,INSTRUCTION_BOX);
 	do
 	{
 		choice = getChoiceMenu();
@@ -57,17 +57,17 @@ void rendersMaxAttempts(void)
 {
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
-	instructionBox("ALERTA","Você atingiu o máximo de tentativas. Não é possível continuar tentando.","Pressione qualquer tecla para retornar ao menu principal...",ERROR_BOX,INSTRUCTION_BOX);
+	instructionBox("ALERTA","Vocï¿½ atingiu o mï¿½ximo de tentativas. Nï¿½o ï¿½ possï¿½vel continuar tentando.","Pressione qualquer tecla para retornar ao menu principal...",ERROR_BOX,INSTRUCTION_BOX);
 	wait();
 }
 
 CONTROLINT rendersInvalidUsername(CONTROLINT attempts)
 {
 	CONTROLINT choice;
-	//pode colocar qual é a tentativa atual (número) na mensagem.
+	//pode colocar qual ï¿½ a tentativa atual (nï¿½mero) na mensagem.
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
-	instructionBox("USUÁRIO INVÁLIDO","O usuário informado não foi encontrado em nossa base de dados. Você pode tentar novamente ou simplesmente se cadastrar agora.","Pressione [1] para se cadastrar ou [2] para tentar novamente.",STANDARD_BOX,INSTRUCTION_BOX);
+	instructionBox("USUï¿½RIO INVï¿½LIDO","O usuï¿½rio informado nï¿½o foi encontrado em nossa base de dados. Vocï¿½ pode tentar novamente ou simplesmente se cadastrar agora.","Pressione [1] para se cadastrar ou [2] para tentar novamente.",STANDARD_BOX,INSTRUCTION_BOX);
 	do
 	{
 		choice = getChoiceMenu();
@@ -79,10 +79,10 @@ CONTROLINT rendersInvalidUsername(CONTROLINT attempts)
 
 void rendersInvalidPassword(CONTROLINT attempts)
 {
-	//pode colocar qual é a tentativa atual (número) na mensagem.
+	//pode colocar qual ï¿½ a tentativa atual (nï¿½mero) na mensagem.
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
-	instructionBox("SENHA INVÁLIDA","A senha informada não corresponde com a cadastrada. Você ainda pode tentar outra vez.","Pressione qualquer tecla para tentar novamente...",ERROR_BOX,INSTRUCTION_BOX);
+	instructionBox("SENHA INVï¿½LIDA","A senha informada nï¿½o corresponde com a cadastrada. Vocï¿½ ainda pode tentar outra vez.","Pressione qualquer tecla para tentar novamente...",ERROR_BOX,INSTRUCTION_BOX);
 	wait();
 }
 
@@ -90,7 +90,7 @@ void rendersGetUsername(char * username)
 {
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
-	instructionBox("LOGIN","Informe o seu nome de usuário.","Username:",STANDARD_BOX,QUESTION_BOX);
+	instructionBox("LOGIN","Informe o seu nome de usuï¿½rio.","Username:",STANDARD_BOX,QUESTION_BOX);
 	positionCursor(2,34,STANDARD_BOX);
 	getString(MAX_USER_NAME_SIZE,username);
 }
@@ -99,12 +99,12 @@ void rendersGetPassword(char * password)
 {
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
-	instructionBox("LOGIN","Informe a palavra passe do seu usuário.","Password:",STANDARD_BOX,QUESTION_BOX);
+	instructionBox("LOGIN","Informe a palavra passe do seu usuï¿½rio.","Password:",STANDARD_BOX,QUESTION_BOX);
 	positionCursor(2,34,STANDARD_BOX);
 	catchPassword(password,MAX_PASSWD_SIZE);
 }
 
-CONTROLINT rendersGetTheme(char themesName[][MAX_SIZE_THEME_NAME],CONTROLINT totalThemes)
+CONTROLINT rendersGetTheme(char themesName[][MAX_SIZE_THEME_NAME],const CONTROLINT totalThemes)
 {
 	CONTROLINT i, choice;
 	char listaThemes[totalThemes][MAX_OPTION_MENU_SIZE];
@@ -125,76 +125,76 @@ CONTROLINT rendersGetTheme(char themesName[][MAX_SIZE_THEME_NAME],CONTROLINT tot
 	return choice;
 }
 
-CONTROLINT rendersGetAnswer(QUESTION mountedQuestion)
+CONTROLINT rendersGetAnswer(QUESTION mountedQuestion, USER player, CONTROLINT gameMode)
 {
 	CONTROLINT choice;	
 	
 	clearScreen();
+	placarBox(player, gameMode);
 	verticalPadding(VERTICAL_PADDING_STANDARD);
-	menuBox(mountedQuestion.title,mountedQuestion.answers,MAX_RESPONSE_OPTIONS);
+	cardFrame(mountedQuestion.title,mountedQuestion.answers);
 	putchar('\n');
-	//emptyLine(' ',MENU_BOX_SIZE,TEXT_STANDARD,BAKGROUND_STANDARD);
-	instructionBox(" "," ","Pressione o número da resposta correta.",STANDARD_BOX,INSTRUCTION_BOX);
+	simpleInstructionBox("Pressione o nï¿½mero correspondente a resposta correta.",STANDARD_BOX);
+	
 	do
 	{
 		choice = getChoiceMenu();
 	}
 	while(!inRange(choice,1,4,CLOSED_RANGE) );
-
 	
 	return choice;
 }
 
 void rendersResultQuestion(QUESTION mountedQuestion, CONTROLINT choice, CONTROLINT correct)
 {
-	
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
-	menuBox(mountedQuestion.title,mountedQuestion.answers,MAX_RESPONSE_OPTIONS);
-	putchar('\n');
-	instructionBox(" ","Falta exibir a correta e a escolhida","Pressione qualquer tecla para continar..",STANDARD_BOX,INSTRUCTION_BOX);
-	wait();
 	
+	cardFrameContrast(mountedQuestion.title,mountedQuestion.answers,correct,choice);
+	putchar('\n');
+	simpleInstructionBox("Pressione qualquer tecla para continar...",STANDARD_BOX);
+
+	wait();	
 }
 
 /*Register*/
 void rendersGetNameForRegister(char * name)
 {
 	char message[100];
-	sprintf(message,"Informe o seu nome com até %d letras.",MAX_NAME_SIZE);
+	sprintf(message,"Informe o seu nome com atï¿½ %d letras.",MAX_NAME_SIZE);
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	progressBar(STANDARD_BOX_SIZE,5,1,BAKGROUND_COMPLETED,BAKGROUND_NOT_COMPLETED);
-	instructionBox("CADASTRO DE USUÁRIO",message,"Nome:",STANDARD_BOX,QUESTION_BOX);
+	instructionBox("CADASTRO DE USUï¿½RIO",message,"Nome:",STANDARD_BOX,QUESTION_BOX);
 	positionCursor(2,29,STANDARD_BOX);
-	getString(MAX_NAME_SIZE,name);	
+	getString(MAX_NAME_SIZE-1,name);	
 }
 
 void rendersGetUsernameForRegister(char * username)
 {
 	char message[150];
-	sprintf(message,"Informe o seu 'username' com até %d letras. Ele deve ser único e sera usado para se logar no sistema.",MAX_USER_NAME_SIZE);
+	sprintf(message,"Informe o seu 'username' com atï¿½ %d letras. Ele deve ser ï¿½nico e sera usado para se logar no sistema.",MAX_USER_NAME_SIZE);
 	clearScreen();	
 	verticalPadding(VERTICAL_PADDING_STANDARD);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	progressBar(STANDARD_BOX_SIZE,5,2,BAKGROUND_COMPLETED,BAKGROUND_NOT_COMPLETED);
-	instructionBox("CADASTRO DE USUÁRIO",message,"Username:",STANDARD_BOX,QUESTION_BOX);
+	instructionBox("CADASTRO DE USUï¿½RIO",message,"Username:",STANDARD_BOX,QUESTION_BOX);
 	positionCursor(2,34,STANDARD_BOX);
-	getString(MAX_USER_NAME_SIZE,username);	
+	getString(MAX_USER_NAME_SIZE-1,username);	
 }
 
 void rendersGetNickname(char * nickname)
 {
 	char message[150];
-	sprintf(message,"Informe o seu 'nickname' com até %d letras. Ele deve ser único. É através dele que você será reconhecido por todos.",MAX_NICKNAME_SIZE);
+	sprintf(message,"Informe o seu 'nickname' com atï¿½ %d letras. Ele deve ser ï¿½nico. ï¿½ atravï¿½s dele que vocï¿½ serï¿½ reconhecido por todos.",MAX_NICKNAME_SIZE);
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	progressBar(STANDARD_BOX_SIZE,5,3,BAKGROUND_COMPLETED,BAKGROUND_NOT_COMPLETED);
-	instructionBox("CADASTRO DE USUÁRIO",message,"Nickname:",STANDARD_BOX,QUESTION_BOX);
+	instructionBox("CADASTRO DE USUï¿½RIO",message,"Nickname:",STANDARD_BOX,QUESTION_BOX);
 	positionCursor(2,34,STANDARD_BOX);
-	getString(MAX_NICKNAME_SIZE,nickname);	
+	getString(MAX_NICKNAME_SIZE-1,nickname);	
 }
 
 void rendersGetPasswordForRegister(char * password, CONTROLINT attempt)
@@ -207,13 +207,13 @@ void rendersGetPasswordForRegister(char * password, CONTROLINT attempt)
 	progressBar(STANDARD_BOX_SIZE,5,4,BAKGROUND_COMPLETED,BAKGROUND_NOT_COMPLETED);
 	if(attempt == GET_PASSWORD)
 	{
-		sprintf(message,"Informe a sua 'password'. Ela deve ter exatamente %d caracteres. São aceitos letras, números e caracteres especiais.",MAX_PASSWD_SIZE-1);		
+		sprintf(message,"Informe a sua 'password'. Ela deve ter exatamente %d caracteres. Sï¿½o aceitos letras, nï¿½meros e caracteres especiais.",MAX_PASSWD_SIZE-1);		
 	}
 	else
 	{
 		strcpy(message,"Digite novamente a sua 'password' para que possamos ter a certeza que a digitou corretamente.");		
 	}
-	instructionBox("CADASTRO DE USUÁRIO",message,"Password:",STANDARD_BOX,QUESTION_BOX);
+	instructionBox("CADASTRO DE USUï¿½RIO",message,"Password:",STANDARD_BOX,QUESTION_BOX);
 	positionCursor(2,34,STANDARD_BOX);
 	catchPassword(password,MAX_PASSWD_SIZE);
 }
@@ -222,7 +222,7 @@ CONTROLINT rendersFullRegister(USER temporaryUser)
 {
 	CONTROLINT choice;
 	char listaTempUser[3][100];
-	char title[100] = "Valide a informa??o do cadastro.";
+	char title[100] = "Valide a informaï¿½ï¿½o do cadastro.";
 	
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
@@ -256,8 +256,9 @@ CONTROLINT rendersFullRegister(USER temporaryUser)
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	emptyLine(' ',STANDARD_BOX_SIZE,TEXT_STANDARD, BAKGROUND_STANDARD);
 	putchar('\n');	
-	//Imprime os dados do usuário
-	instructionBox("CADASTRO DE USUÁRIO","Verifique se todos os dados estão corretos.","Pressione [1] para reiniciar o cadastro ou [2] para confirmar.",STANDARD_BOX,INSTRUCTION_BOX);	
+
+	//Imprime os dados do usuï¿½rio
+	instructionBox("CADASTRO DE USUï¿½RIO","Verifique se todos os dados estï¿½o corretos.","Pressione [1] para reiniciar o cadastro ou [2] para confirmar.",STANDARD_BOX,INSTRUCTION_BOX);	
 	do
 	{
 		choice = getChoiceMenu();
@@ -273,7 +274,7 @@ CONTROLINT rendersPasswordsDoNotMatch(void)
 	
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
-	instructionBox("PASSWORD NÃO COINCIDE","As passwords informadas não são iguais. Você pode tentar redigitá-las ou simplesmente desistir do seu cadastro.","Pressione [1] para tentar novamente ou [2] para desistir.",ERROR_BOX,INSTRUCTION_BOX);
+	instructionBox("PASSWORD Nï¿½O COINCIDE","As passwords informadas nï¿½o sï¿½o iguais. Vocï¿½ pode tentar redigitï¿½-las ou simplesmente desistir do seu cadastro.","Pressione [1] para tentar novamente ou [2] para desistir.",ERROR_BOX,INSTRUCTION_BOX);
 	do
 	{
 		choice = getChoiceMenu();
@@ -289,7 +290,7 @@ CONTROLINT rendersInvalidNickname(void)
 	
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
-	instructionBox("NICKNAME NÃO DISPONÍVEL","O 'nickname' informado já está sendo utilizado por outro usuário. Escolha outro apelido para lhe representar.","Pressione [1] para tentar novamente ou [2] para desistir.",ERROR_BOX,INSTRUCTION_BOX);
+	instructionBox("NICKNAME Nï¿½O DISPONï¿½VEL","O 'nickname' informado jï¿½ estï¿½ sendo utilizado por outro usuï¿½rio. Escolha outro apelido para lhe representar.","Pressione [1] para tentar novamente ou [2] para desistir.",ERROR_BOX,INSTRUCTION_BOX);
 	do
 	{
 		choice = getChoiceMenu();
@@ -305,7 +306,7 @@ CONTROLINT rendersUsernameAlreadyExists(void)
 	
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
-	instructionBox("USERNAME NÃO DISPONÍVEL","O 'username' informado já está sendo utilizado por outro usuário. Escolha outro nome de acesso ao sistema.","Pressione [1] para tentar novamente ou [2] para desistir.",ERROR_BOX,INSTRUCTION_BOX);
+	instructionBox("USERNAME Nï¿½O DISPONï¿½VEL","O 'username' informado jï¿½ estï¿½ sendo utilizado por outro usuï¿½rio. Escolha outro nome de acesso ao sistema.","Pressione [1] para tentar novamente ou [2] para desistir.",ERROR_BOX,INSTRUCTION_BOX);
 	do
 	{
 		choice = getChoiceMenu();
@@ -316,6 +317,14 @@ CONTROLINT rendersUsernameAlreadyExists(void)
 }
 
 
+void rendersDesistRegistering(void)
+{	
+	clearScreen();
+	verticalPadding(VERTICAL_PADDING_STANDARD);
+	instructionBox("ALERTA","Vocï¿½ desistiu do seu registro de usuï¿½rio. Deverï¿½ tentar se logar outra vez.","Pressione qualquer tecla para tentar logar novamente...",ERROR_BOX,INSTRUCTION_BOX);
+	wait();
+}
+
 /* ADM */
 
 void rendersGetQuestionTitle(char * title)
@@ -324,7 +333,7 @@ void rendersGetQuestionTitle(char * title)
 	verticalPadding(VERTICAL_PADDING_STANDARD);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	progressBar(STANDARD_BOX_SIZE,6,1,BAKGROUND_COMPLETED,BAKGROUND_NOT_COMPLETED);
-	instructionBox("CADASTRO DE PERGUNTA","Informe o título da pergunta, ou seja, a pergunta propriamente dita.","Título:",STANDARD_BOX,QUESTION_BOX);
+	instructionBox("CADASTRO DE PERGUNTA","Informe o tï¿½tulo da pergunta, ou seja, a pergunta propriamente dita.","Tï¿½tulo:",STANDARD_BOX,QUESTION_BOX);
 	positionCursor(2,32,STANDARD_BOX);
 	getString(MAX_TITLE_SIZE,title);	
 }
@@ -335,7 +344,7 @@ void rendersGetQuestionRightAnswer(char * correctAnswer)
 	verticalPadding(VERTICAL_PADDING_STANDARD);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	progressBar(STANDARD_BOX_SIZE,6,2,BAKGROUND_COMPLETED,BAKGROUND_NOT_COMPLETED);
-	instructionBox("CADASTRO DE PERGUNTA","Informe a resposta CORRETA para a questão anteriormente inserida.","Resposta CORRETA:",STANDARD_BOX,QUESTION_BOX);
+	instructionBox("CADASTRO DE PERGUNTA","Informe a resposta CORRETA para a questï¿½o anteriormente inserida.","Resposta CORRETA:",STANDARD_BOX,QUESTION_BOX);
 	positionCursor(2,42,STANDARD_BOX);
 	getString(MAX_TITLE_SIZE,correctAnswer);	
 }
@@ -346,27 +355,24 @@ void rendersGetQuestionAnswer(char * answer, CONTROLINT progressBarPosition)
 	verticalPadding(VERTICAL_PADDING_STANDARD);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	progressBar(STANDARD_BOX_SIZE,6,progressBarPosition,BAKGROUND_COMPLETED,BAKGROUND_NOT_COMPLETED);
-	instructionBox("CADASTRO DE PERGUNTA","Informe outra opção de resposta para a questão anteriormente inserida.","Resposta:",STANDARD_BOX,QUESTION_BOX);
+	instructionBox("CADASTRO DE PERGUNTA","Informe outra opï¿½ï¿½o de resposta para a questï¿½o anteriormente inserida.","Resposta:",STANDARD_BOX,QUESTION_BOX);
 	positionCursor(2,34,STANDARD_BOX);
 	getString(MAX_TITLE_SIZE,answer);	
 }
 
 CONTROLINT rendersConfirmationQuestion(QUESTION question)
 {
-	CONTROLINT i, choice;
-	
-	char listaQuestion[MAX_RESPONSE_OPTIONS][MAX_ANSWER_SIZE];
-	
-	for(i=0;i<MAX_RESPONSE_OPTIONS;i++)
-		sprintf(listaQuestion[i],"%d - %s",i+1,question.answers[i]);
+	CONTROLINT choice;	
 	
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
-	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
-	progressBar(STANDARD_BOX,6,6,BAKGROUND_COMPLETED,BAKGROUND_NOT_COMPLETED);
-	menuBox(question.title,listaQuestion,MAX_RESPONSE_OPTIONS);
+	cardFrame(question.title,question.answers);
 	putchar('\n');
-	instructionBox("CADASTRO DE PERGUNTA","Verifique se todos os dados estão corretos.","Pressione [1] para reiniciar o cadastro ou [2] para confirmar.",STANDARD_BOX,INSTRUCTION_BOX);	
+	
+	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
+	progressBar(STANDARD_BOX_SIZE,6,6,BAKGROUND_COMPLETED,BAKGROUND_NOT_COMPLETED);	
+	
+	instructionBox("CADASTRO DE PERGUNTA","Verifique se todos os dados estï¿½o corretos.","Pressione [1] para reiniciar o cadastro ou [2] para confirmar.",STANDARD_BOX,INSTRUCTION_BOX);	
 	do
 	{
 		choice = getChoiceMenu();
@@ -382,7 +388,7 @@ CONTROLINT rendersConfirmationQuestion(QUESTION question)
 
 void rendersHistory(NODE ** history)
 {
-	char messageEmptyList[] = "Infelizmente nenhum jogador ainda se aventurou no fantástico mundo do TRIVIAL. Que tal você começar esta proeza!?";
+	char messageEmptyList[] = "Infelizmente nenhum jogador ainda se aventurou no fantï¿½stico mundo do TRIVIAL. Que tal vocï¿½ comeï¿½ar esta proeza!?";
 	char * userLine = (char * ) allocateMemory(MAX_NICKNAME_SIZE+10,sizeof(char));
 	USER temporaryUser; //apagar casou use o vetor de users
 	//USER * playerList = (USER *) allocateMemory(settings.historySize,sizeof(USER));
@@ -395,9 +401,9 @@ void rendersHistory(NODE ** history)
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	emptyLine(' ',STANDARD_BOX_SIZE,TEXT_STANDARD,BAKGROUND_STANDARD);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
-	lineTitle(' ',' ',STANDARD_BOX_SIZE,ALIGN_CENTER,"HISTÓRICO",TEXT_STANDARD,BAKGROUND_STANDARD);
+	lineTitle(' ',' ',STANDARD_BOX_SIZE,ALIGN_CENTER,"HISTï¿½RICO",TEXT_STANDARD,BAKGROUND_STANDARD);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
-	lineTitle(' ',' ',STANDARD_BOX_SIZE,ALIGN_CENTER,"| Listagem dos últimos 15 jogadores |",TEXT_STANDARD,BAKGROUND_STANDARD);
+	lineTitle(' ',' ',STANDARD_BOX_SIZE,ALIGN_CENTER,"| Listagem dos ï¿½ltimos 15 jogadores |",TEXT_STANDARD,BAKGROUND_STANDARD);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	emptyLine(' ',STANDARD_BOX_SIZE,TEXT_STANDARD,BAKGROUND_STANDARD);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
@@ -435,37 +441,37 @@ void rendersHistory(NODE ** history)
 	lineTitle(' ',' ',STANDARD_BOX_SIZE,ALIGN_CENTER,"Pressione qualquer tecla para retornar ao menu principal...",TEXT_STANDARD,BAKGROUND_STANDARD);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	emptyLine(' ',STANDARD_BOX_SIZE,TEXT_STANDARD,BAKGROUND_STANDARD);
-	getch();
+	wait();
 }
 
 void redersHistoryFatalError(void)
 
 {
-	char message[] = "Algo terrível aconteceu durante o carregamento do programa que impediu a inicialização do histórico de jogadores. Tente reinstalar o jogo, caso isto não funcione contate o suporte. O TRIVIAL precisa ser encerrado, lamentamos este inconveniente.";
+	char message[] = "Algo terrï¿½vel aconteceu durante o carregamento do programa que impediu a inicializaï¿½ï¿½o do histï¿½rico de jogadores. Tente reinstalar o jogo, caso isto nï¿½o funcione contate o suporte. O TRIVIAL precisa ser encerrado, lamentamos este inconveniente.";
 	char instruction[] = "Pressione qualquer tecla para finalizar o programa.";
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
-	instructionBox("FALHA AO CARREGAR HISTÓRICO",message,instruction,ERROR_BOX,INSTRUCTION_BOX);
-	getch();
+	instructionBox("FALHA AO CARREGAR HISTï¿½RICO",message,instruction,ERROR_BOX,INSTRUCTION_BOX);
+	wait();
 }
 
 /*Top 10*/
 	
 void redersTop10FatalError(void)
 {
-	char message[] = "Algo terrível aconteceu durante o carregamento do programa que impediu a inicialização da lista dos 10 melhores jogadores. Tente reinstalar o jogo, caso isto não funcione contate o suporte. O TRIVIAL precisa ser encerrado, lamentamos este inconveniente.";
+	char message[] = "Algo terrï¿½vel aconteceu durante o carregamento do programa que impediu a inicializaï¿½ï¿½o da lista dos 10 melhores jogadores. Tente reinstalar o jogo, caso isto nï¿½o funcione contate o suporte. O TRIVIAL precisa ser encerrado, lamentamos este inconveniente.";
 	char instruction[] = "Pressione qualquer tecla para finalizar o programa.";
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
-	instructionBox("FALHA AO CARREGAR HISTÓRICO",message,instruction,ERROR_BOX,INSTRUCTION_BOX);
-	getch();
+	instructionBox("FALHA AO CARREGAR HISTï¿½RICO",message,instruction,ERROR_BOX,INSTRUCTION_BOX);
+	wait();
 	
 }
 
 void rendersTopPlayers(NODE ** bestPlayers)
 {
-	char messageEmptyList[] = "Infelizmente nenhum jogador ainda se aventurou no fantástico mundo do TRIVIAL. Que tal você começar esta proeza!?";
-	char templates[] = "%dº - %s  com %2f \% de acertos";
+	char messageEmptyList[] = "Infelizmente nenhum jogador ainda se aventurou no fantï¿½stico mundo do TRIVIAL. Que tal vocï¿½ comeï¿½ar esta proeza!?";
+	char templates[] = "%dï¿½ - %s  com %2.f %% de acertos";
 	char * userLine = (char * ) allocateMemory(MAX_NICKNAME_SIZE+strlen(templates)+2,sizeof(char));
 	USER temporaryUser;
 	CONTROLINT i;
@@ -513,5 +519,5 @@ void rendersTopPlayers(NODE ** bestPlayers)
 	lineTitle(' ',' ',STANDARD_BOX_SIZE,ALIGN_CENTER,"Pressione qualquer tecla para retornar ao menu principal...",TEXT_STANDARD,BAKGROUND_STANDARD);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	emptyLine(' ',STANDARD_BOX_SIZE,TEXT_STANDARD,BAKGROUND_STANDARD);
-	getch();
+	wait();
 }

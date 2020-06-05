@@ -1,6 +1,82 @@
 #include "../inc/design.h"
 
 
+void cardFrame(char * questionTitle, char answers[MAX_RESPONSE_OPTIONS][MAX_ANSWER_SIZE])
+{
+	CONTROLINT i;
+	char answerTemplate[] = "%i - %s";
+	
+	
+	/*header*/
+	alignmentPadding(CARD_BOX_SIZE,ALIGN_CENTER);
+	emptyLine(' ',CARD_BOX_SIZE,TEXT_STANDARD,BAKGROUND_STANDARD);
+	textFrame(' ',PADDING_INTERNAL,CARD_BOX_SIZE,ALIGN_LEFT,ALIGN_CENTER,questionTitle,TEXT_STANDARD,BAKGROUND_STANDARD);
+	alignmentPadding(CARD_BOX_SIZE,ALIGN_CENTER);
+	bottomLine(' ','*',CARD_BOX_SIZE,TEXT_STANDARD,BAKGROUND_STANDARD);
+	alignmentPadding(CARD_BOX_SIZE,ALIGN_CENTER);
+	emptyLine(' ',CARD_BOX_SIZE,TEXT_STANDARD,BAKGROUND_STANDARD);
+	
+	/*answers*/
+	for(i=0;i<MAX_RESPONSE_OPTIONS;i++)
+	{
+		char * mountedResponse = allocateMemory(strlen(answerTemplate)+strlen(answers[i]),sizeof(char));
+		sprintf(mountedResponse,answerTemplate,i+1,answers[i]);
+		textFrame(' ',PADDING_INTERNAL,CARD_BOX_SIZE,ALIGN_LEFT,ALIGN_CENTER,mountedResponse,TEXT_STANDARD,BAKGROUND_STANDARD);		
+		free(mountedResponse);
+	}	
+	
+	/*footer*/
+	alignmentPadding(CARD_BOX_SIZE,ALIGN_CENTER);
+	emptyLine(' ',CARD_BOX_SIZE,TEXT_STANDARD,BAKGROUND_STANDARD);
+}
+
+void cardFrameContrast(char * questionTitle, char answers[MAX_RESPONSE_OPTIONS][MAX_ANSWER_SIZE], CONTROLINT correctOption, CONTROLINT choice) 
+{
+	CONTROLINT i;
+	char answerTemplate[] = "%i - %s";
+	char textColor[STRING_COLOR_SIZE], backgroundColor[STRING_COLOR_SIZE];
+	
+	correctOption--;
+	choice--;
+	
+	/*header*/
+	alignmentPadding(CARD_BOX_SIZE,ALIGN_CENTER);
+	emptyLine(' ',CARD_BOX_SIZE,TEXT_STANDARD,BAKGROUND_STANDARD);
+	textFrame(' ',PADDING_INTERNAL,CARD_BOX_SIZE,ALIGN_LEFT,ALIGN_CENTER,questionTitle,TEXT_STANDARD,BAKGROUND_STANDARD);
+	alignmentPadding(CARD_BOX_SIZE,ALIGN_CENTER);
+	bottomLine(' ','*',CARD_BOX_SIZE,TEXT_STANDARD,BAKGROUND_STANDARD);
+	alignmentPadding(CARD_BOX_SIZE,ALIGN_CENTER);
+	emptyLine(' ',CARD_BOX_SIZE,TEXT_STANDARD,BAKGROUND_STANDARD);
+	
+	/*answers*/
+	for(i=0;i<MAX_RESPONSE_OPTIONS;i++)
+	{
+		char * mountedResponse = allocateMemory(strlen(answerTemplate)+strlen(answers[i]),sizeof(char));
+		sprintf(mountedResponse,answerTemplate,i+1,answers[i]);
+		if(i == correctOption)
+		{
+			strcpy(backgroundColor,TEXT_SUCCESS);
+			strcpy(textColor,BAKGROUND_SUCCESS);
+		}
+		else if(i == choice)
+		{
+			strcpy(backgroundColor,BAKGROUND_ERROR);
+			strcpy(textColor,TEXT_ERROR);
+		}
+		else
+		{
+			strcpy(backgroundColor,BAKGROUND_STANDARD);
+			strcpy(textColor,TEXT_STANDARD);
+		}
+		textFrame(' ',PADDING_INTERNAL,CARD_BOX_SIZE,ALIGN_LEFT,ALIGN_CENTER,mountedResponse,textColor,backgroundColor);		
+		free(mountedResponse);
+	}	
+	
+	/*footer*/
+	alignmentPadding(CARD_BOX_SIZE,ALIGN_CENTER);
+	emptyLine(' ',CARD_BOX_SIZE,TEXT_STANDARD,BAKGROUND_STANDARD);
+}
+
 void textFrame(const char limiter, const CONTROLINT internalPadding, const CONTROLINT frameWidth, const CONTROLINT internalAlignment, const CONTROLINT boxAlignment, char * text, char * textColor, char * backgroundColor)
 {
 	const char delimiter[] = " ";
@@ -37,6 +113,7 @@ void textFrame(const char limiter, const CONTROLINT internalPadding, const CONTR
 	lineBuilder(limiter,' ',' ',internalPadding,PADDING_NULL,frameWidth,internalAlignment,line, textColor, backgroundColor);
 	free(copyText);
 	free(line);
+	applyColor(RESET_COLOR);
 }
 
 void bottomLine(const char limiter, const char fill, const CONTROLINT lineSize, char * textColor, char * backgroundColor)
@@ -169,6 +246,24 @@ void applyColor(char * color)
 	printf("%s",color);
 }
 
+void simpleInstructionBox(char * instruction, CONTROLINT boxStyle)
+{
+	char textColor[STRING_COLOR_SIZE], backgroundColor[STRING_COLOR_SIZE];
+	CONTROLINT alignment = ALIGN_CENTER;
+	
+	setColor(textColor,backgroundColor,boxStyle);
+	applyColor(RESET_COLOR);
+	
+	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
+	emptyLine(' ',STANDARD_BOX_SIZE,textColor, backgroundColor);
+		
+	textFrame(' ',PADDING_INTERNAL,STANDARD_BOX_SIZE,ALIGN_CENTER,ALIGN_CENTER,instruction,textColor, backgroundColor);
+	
+	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
+	emptyLine(' ',STANDARD_BOX_SIZE,textColor, backgroundColor);
+	
+	applyColor(RESET_COLOR);	
+}
 
 void instructionBox(char * title, char * message, char * instruction, CONTROLINT boxStyle, CONTROLINT typeBox)
 {
@@ -203,8 +298,7 @@ void instructionBox(char * title, char * message, char * instruction, CONTROLINT
 	lineBuilder(' ',' ',' ',PADDING_INTERNAL,PADDING_NULL,STANDARD_BOX_SIZE,alignment,instruction, textColor, backgroundColor);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	emptyLine(' ',STANDARD_BOX_SIZE,textColor, backgroundColor);
-	applyColor(RESET_COLOR);
-	//bottomLine(' ',' ',STANDARD_BOX_SIZE, textColor, backgroundColor);	
+	applyColor(RESET_COLOR);	
 }
 
 void positionCursor(CONTROLINT linesUp, CONTROLINT movementsToRight, CONTROLINT boxStyle)
@@ -279,16 +373,27 @@ void menuBox(char * title, char options[][MAX_OPTION_MENU_SIZE], CONTROLINT tota
 	emptyLine(' ',MENU_BOX_SIZE,textColor, backgroundColor);	
 }
 
-void placarBox(char * playerNickname, CONTROLINT gameMode)
+void placarBox(USER player, CONTROLINT gameMode)
 {
 	char textColor[STRING_COLOR_SIZE], backgroundColor[STRING_COLOR_SIZE];
 	char line1[]="JOGADOR                  HISTÓRIA        BIOLOGIA E GEOGRAFIA        ARTES E LETRAS        TRIVIALIDADES";
-	char score[]="                    11 / 3                11 / 3                   11 / 3                11 / 3";
-	char line2[100];
+	char line2[130];
+	char * name;
+	CONTROLINT i,j, difSize;
 	
-	setColor(textColor,backgroundColor,PLACAR_BOX);
-	strcpy(line2,playerNickname);
-	strcat(line2,score);
+	difSize = MAX_NICKNAME_SIZE - 1 - strlen(player.nickname);
+	name = (char *) allocateMemory(MAX_NICKNAME_SIZE,sizeof(char));
+	strcpy(name,player.nickname);
+	if(difSize != 0)
+	{		
+		for(i=0,j=strlen(player.nickname);i<difSize;i++,j++)
+			name[j] = ' ';
+		name[j] = '\0';
+	}
+	
+	sprintf(line2,"%s                    %d/%d                %d/%d                   %d/%d                %d/%d",name,player.currentScore[0],gameMode,player.currentScore[1],gameMode,player.currentScore[2],gameMode,player.currentScore[3],gameMode);
+	setColor(textColor,backgroundColor,PLACAR_BOX);	
+	
 	
 	alignmentPadding(PLACAR_BOX_SIZE,ALIGN_CENTER);
 	emptyLine(' ',PLACAR_BOX_SIZE,textColor, backgroundColor);
