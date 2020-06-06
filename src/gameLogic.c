@@ -7,11 +7,9 @@ CONTROLINT startGame(void)
 	
 	gameMode = getGameMode();
 	totalPlayers = getTotalPlayers();
-	players = login(totalPlayers);
-	
-	playRound(players,totalPlayers,gameMode);
-	
-	//QUem mata esse ponteiro para user criado pelo login?
+	players = login(totalPlayers);	
+	playRound(players,totalPlayers,gameMode);	
+	free(players);
 	
 	return SUCCESS;
 }
@@ -71,7 +69,7 @@ static CONTROLINT playRound(USER * players,const CONTROLINT totalPlayers, const 
 		
 		do
 		{
-			chosenTheme = getTheme();
+			chosenTheme = getTheme(players[currentPlayer],gameMode);
 			
 			originalQuestion = popDeck(listThemes[chosenTheme].deck);
 			mountedQuestion = originalQuestion;
@@ -79,27 +77,29 @@ static CONTROLINT playRound(USER * players,const CONTROLINT totalPlayers, const 
 			
 			choice = getAnswer(mountedQuestion, players[currentPlayer], gameMode); 
 			
+			increasesTotalQuestionsAnswered(&players[currentPlayer]);
 			result = isAnswerCorrect(choice,correctOption(originalQuestion,mountedQuestion));
 			
-			rendersResultQuestion(mountedQuestion, choice, correctOption(originalQuestion,mountedQuestion));
+			rendersResultQuestion(mountedQuestion, choice, correctOption(originalQuestion,mountedQuestion),players[currentPlayer], gameMode);
 			
 			if(result)
 			{
 				punctuatePlayer(&players[currentPlayer],chosenTheme);
-				players[currentPlayer].percentageCorrect = getPercentageCorrectAnswers(&players[currentPlayer],gameMode);
+				players[currentPlayer].percentageCorrect = getPercentageCorrectAnswers(&players[currentPlayer]);
 				if(isEndGame(players,currentPlayer,gameMode))
 				{
+					renderCongratulations(players[currentPlayer]);
 					if(isTop(players[currentPlayer]))
 					{
 						insertTop(players[currentPlayer]);
-						renderParabensTop(players[currentPlayer]);	
+						renderCongratulationsTop(players[currentPlayer]);	
 					}
 						
 					insertHistory(players,totalPlayers);
 					deckControl(listThemes,settings.totalThemes,deckSize,GAME_FINISHED);
 					increasesGlobalRound(players,totalPlayers,&settings);
 					free(listThemes);
-					renderParabens(players[currentPlayer]);
+					
 					return SUCCESS; //termina tudo			
 				}	
 			}
@@ -117,13 +117,13 @@ static CONTROLINT getAnswer(QUESTION mountedQuestion, USER player, CONTROLINT ga
 	return choice-1; //retorna o indice do vetor onde está a resposta.
 }
 
-static CONTROLINT getTheme(void)
+static CONTROLINT getTheme(USER player, CONTROLINT gameMode)
 {
 	CONTROLINT choice;
 	char themesName[settings.totalThemes][MAX_SIZE_THEME_NAME];
 	
 	getThemesName(themesName);
-	choice = rendersGetTheme(themesName,settings.totalThemes);
+	choice = rendersGetThemeForPlaying(themesName,settings.totalThemes,player,gameMode);
 	
 	return (choice-1); //é o índice do vetor	
 }
@@ -164,6 +164,11 @@ void punctuatePlayer(USER * player, CONTROLINT chosenTheme)
 	player->currentScore[chosenTheme]++;
 }
 
+void increasesTotalQuestionsAnswered(USER * player)
+{
+	player->totalAnswered++;
+}
+
 static CONTROLINT isEndGame(const USER * playersList, const CONTROLINT currentPlayer, const CONTROLINT gameMode)
 {
 	CONTROLINT i, status;
@@ -191,9 +196,18 @@ static void advanceRound(CONTROLINT * currentPlayer)
 	(*currentPlayer)++;
 }
 
-static float getPercentageCorrectAnswers(const USER * player, const CONTROLINT gameMode)
+static float sumCorrectAnswers(const USER * player)
 {
-	return ((float) gameMode * settings.totalThemes * 100) / player->totalAnswered;
+	CONTROLINT i, total;
+	
+	for(i=0, total=0;i < settings.totalThemes; i++)
+		total += player->currentScore[i];
+	return total;
+}
+
+static float getPercentageCorrectAnswers(const USER * player) 
+{
+	return (sumCorrectAnswers(player) / player->totalAnswered) * 100;
 }
 
 static void bootPlayer(USER * player)
@@ -246,7 +260,7 @@ static CONTROLINT defineDeckSize(const CONTROLINT gameMode, const CONTROLINT tot
 	CONTROLINT deckSize;
 	CONTROLINT averageErrorInt = (CONTROLINT) roundInteger(averageErrorAnswer);
 	
-	deckSize = gameMode * totalPlayers * averageErrorInt * totalThemes;
+	deckSize = gameMode * totalPlayers * averageErrorInt;
 	
 	return deckSize;
 }
@@ -256,18 +270,16 @@ static float averageWrongAnswersRound(USER * players, const CONTROLINT totalPlay
 	float average;
 	CONTROLINT i, j, wrongAnswers, currentScore;
 	
-	for(i=0,wrongAnswers=0;i<totalPlayers;i++)
+	for(i=0,currentScore=0,wrongAnswers=0;i<totalPlayers;i++)
 	{
-		for(j=0, currentScore=0;j<TOTAL_THEMES;j++)
-		{
-			currentScore += players[i].currentScore[j];
-		}
+		currentScore = sumCorrectAnswers(&players[i]);
 		wrongAnswers += (players[i].totalAnswered - currentScore);
 	}
 	average = wrongAnswers / (float) totalPlayers;
 	
 	return average;
 }
+
 
 static float averageWrongAnswersGlobal(float currentGlobalAverage, float roundAverage, CONTROLINT * totalRounds)
 {

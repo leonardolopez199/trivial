@@ -36,9 +36,6 @@ void cardFrameContrast(char * questionTitle, char answers[MAX_RESPONSE_OPTIONS][
 	char answerTemplate[] = "%i - %s";
 	char textColor[STRING_COLOR_SIZE], backgroundColor[STRING_COLOR_SIZE];
 	
-	correctOption--;
-	choice--;
-	
 	/*header*/
 	alignmentPadding(CARD_BOX_SIZE,ALIGN_CENTER);
 	emptyLine(' ',CARD_BOX_SIZE,TEXT_STANDARD,BAKGROUND_STANDARD);
@@ -391,10 +388,9 @@ void placarBox(USER player, CONTROLINT gameMode)
 		name[j] = '\0';
 	}
 	
-	sprintf(line2,"%s                    %d/%d                %d/%d                   %d/%d                %d/%d",name,player.currentScore[0],gameMode,player.currentScore[1],gameMode,player.currentScore[2],gameMode,player.currentScore[3],gameMode);
+	sprintf(line2," %s                     %d/%d                   %d/%d                      %d/%d                   %d/%d",name,player.currentScore[0],gameMode,player.currentScore[1],gameMode,player.currentScore[2],gameMode,player.currentScore[3],gameMode);
 	setColor(textColor,backgroundColor,PLACAR_BOX);	
-	
-	
+		
 	alignmentPadding(PLACAR_BOX_SIZE,ALIGN_CENTER);
 	emptyLine(' ',PLACAR_BOX_SIZE,textColor, backgroundColor);
 	

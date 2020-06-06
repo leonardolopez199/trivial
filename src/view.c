@@ -104,7 +104,7 @@ void rendersGetPassword(char * password)
 	catchPassword(password,MAX_PASSWD_SIZE);
 }
 
-CONTROLINT rendersGetTheme(char themesName[][MAX_SIZE_THEME_NAME],const CONTROLINT totalThemes)
+CONTROLINT rendersGetThemeForPlaying(char themesName[][MAX_SIZE_THEME_NAME],const CONTROLINT totalThemes, USER player, CONTROLINT gameMode)
 {
 	CONTROLINT i, choice;
 	char listaThemes[totalThemes][MAX_OPTION_MENU_SIZE];
@@ -113,14 +113,14 @@ CONTROLINT rendersGetTheme(char themesName[][MAX_SIZE_THEME_NAME],const CONTROLI
 		sprintf(listaThemes[i],"%d - %s",i+1,themesName[i]);
 	
 	clearScreen();
+	placarBox(player, gameMode);
 	verticalPadding(VERTICAL_PADDING_STANDARD);
 	menuBox("TEMAS",listaThemes,totalThemes);
 	do
 	{
 		choice = getChoiceMenu();
 	}
-	while(!inRange(choice,1,totalThemes,CLOSED_RANGE));
-	
+	while(!inRange(choice,1,totalThemes,CLOSED_RANGE));	
 	
 	return choice;
 }
@@ -145,19 +145,19 @@ CONTROLINT rendersGetAnswer(QUESTION mountedQuestion, USER player, CONTROLINT ga
 	return choice;
 }
 
-void rendersResultQuestion(QUESTION mountedQuestion, CONTROLINT choice, CONTROLINT correct)
+void rendersResultQuestion(QUESTION mountedQuestion, CONTROLINT choice, CONTROLINT correct, USER player, CONTROLINT gameMode)
 {
 	clearScreen();
+	placarBox(player, gameMode);
 	verticalPadding(VERTICAL_PADDING_STANDARD);
 	
 	cardFrameContrast(mountedQuestion.title,mountedQuestion.answers,correct,choice);
 	putchar('\n');
 	simpleInstructionBox("Pressione qualquer tecla para continar...",STANDARD_BOX);
-
 	wait();	
 }
 
-void renderParabens(USER player){	
+void renderCongratulations(USER player){	
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
@@ -165,14 +165,14 @@ void renderParabens(USER player){
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	char nome[2][50];
 	sprintf(nome[0]," |       |             %s",player.name);	
-	sprintf(nome[1],"  \\     /                  Você ganhou o jogo!");
+	sprintf(nome[1],"  \\     /                  Vocï¿½ ganhou o jogo!");
 	emptyLine(' ',STANDARD_BOX_SIZE,TEXT_SUCCESS, BAKGROUND_SUCCESS);	
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	lineBuilder(' ',' ',' ',PADDING_INTERNAL,PADDING_NULL,STANDARD_BOX_SIZE,ALIGN_LEFT, "  _______", TEXT_SUCCESS, BAKGROUND_SUCCESS);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	lineBuilder(' ',' ',' ',PADDING_INTERNAL,PADDING_NULL,STANDARD_BOX_SIZE,ALIGN_LEFT, " |       |", TEXT_SUCCESS, BAKGROUND_SUCCESS);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
-	lineBuilder(' ',' ',' ',PADDING_INTERNAL,PADDING_NULL,STANDARD_BOX_SIZE,ALIGN_LEFT, "(|  #1   |)       PARABÉNS!", TEXT_SUCCESS, BAKGROUND_SUCCESS);	
+	lineBuilder(' ',' ',' ',PADDING_INTERNAL,PADDING_NULL,STANDARD_BOX_SIZE,ALIGN_LEFT, "(|  #1   |)       PARABï¿½NS!", TEXT_SUCCESS, BAKGROUND_SUCCESS);	
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	lineBuilder(' ',' ',' ',PADDING_INTERNAL,PADDING_NULL,STANDARD_BOX_SIZE,ALIGN_LEFT, nome[0], TEXT_SUCCESS, BAKGROUND_SUCCESS);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
@@ -184,7 +184,8 @@ void renderParabens(USER player){
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	emptyLine(' ',STANDARD_BOX_SIZE,TEXT_SUCCESS, BAKGROUND_SUCCESS);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
-	emptyLine(' ',STANDARD_BOX_SIZE,TEXT_SUCCESS, BAKGROUND_SUCCESS);	
+	emptyLine(' ',STANDARD_BOX_SIZE,TEXT_SUCCESS, BAKGROUND_SUCCESS);
+	sleep(2);
 }
 
 /*Register*/
@@ -257,8 +258,7 @@ CONTROLINT rendersFullRegister(USER temporaryUser)
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
-	progressBar(STANDARD_BOX,5,5,BAKGROUND_COMPLETED,BAKGROUND_NOT_COMPLETED);
-	//Imprime os dados do usu?rio	
+	progressBar(STANDARD_BOX,5,5,BAKGROUND_COMPLETED,BAKGROUND_NOT_COMPLETED);	
 	
 	sprintf(listaTempUser[0],"Nome: %s",temporaryUser.name);
 	sprintf(listaTempUser[1],"Username: %s",temporaryUser.username);
@@ -356,6 +356,28 @@ void rendersDesistRegistering(void)
 }
 
 /* ADM */
+
+
+CONTROLINT rendersGetTheme(char themesName[][MAX_SIZE_THEME_NAME],const CONTROLINT totalThemes)
+{
+	CONTROLINT i, choice;
+	char listaThemes[totalThemes][MAX_OPTION_MENU_SIZE];
+	
+	for(i=0;i<settings.totalThemes;i++)
+		sprintf(listaThemes[i],"%d - %s",i+1,themesName[i]);
+	
+	clearScreen();
+	verticalPadding(VERTICAL_PADDING_STANDARD);
+	menuBox("TEMAS",listaThemes,totalThemes);
+	do
+	{
+		choice = getChoiceMenu();
+	}
+	while(!inRange(choice,1,totalThemes,CLOSED_RANGE));
+	
+	
+	return choice;
+}
 
 void rendersGetQuestionTitle(char * title)
 {		
@@ -525,7 +547,7 @@ void rendersTopPlayers(NODE ** bestPlayers)
 	if(settings.topSize > 0)
 	{
 		
-		for(i=0;i<settings.historySize;i++)
+		for(i=0;i<settings.topSize;i++)
 		{
 			temporaryUser = returnsTopPlayersOneByOne(bestPlayers);	
 			sprintf(userLine,templates,i+1,temporaryUser.nickname,temporaryUser.percentageCorrect);				
@@ -552,10 +574,9 @@ void rendersTopPlayers(NODE ** bestPlayers)
 	wait();
 }
 
-void renderParabensTop(USER player){
+void renderCongratulationsTop(USER player){
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
-	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	char dados[1][50];	
 	sprintf(dados[0],"%s",player.name);	
@@ -587,16 +608,17 @@ void renderParabensTop(USER player){
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	lineBuilder(' ',' ',' ',PADDING_INTERNAL,PADDING_NULL,STANDARD_BOX_SIZE,ALIGN_CENTER, dados[0] , TEXT_STANDARD, BAKGROUND_STANDARD);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
-	lineBuilder(' ',' ',' ',PADDING_INTERNAL,PADDING_NULL,STANDARD_BOX_SIZE,ALIGN_CENTER,"Você entrou no Top 10.", TEXT_STANDARD, BAKGROUND_STANDARD);	
+	lineBuilder(' ',' ',' ',PADDING_INTERNAL,PADDING_NULL,STANDARD_BOX_SIZE,ALIGN_CENTER,"Vocï¿½ entrou no Top 10.", TEXT_STANDARD, BAKGROUND_STANDARD);	
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
-	lineBuilder(' ',' ',' ',PADDING_INTERNAL,PADDING_NULL,STANDARD_BOX_SIZE,ALIGN_CENTER,"PARABÉNS!", TEXT_STANDARD, BAKGROUND_STANDARD);
+	lineBuilder(' ',' ',' ',PADDING_INTERNAL,PADDING_NULL,STANDARD_BOX_SIZE,ALIGN_CENTER,"PARABï¿½NS!", TEXT_STANDARD, BAKGROUND_STANDARD);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 	emptyLine(' ',STANDARD_BOX_SIZE,TEXT_STANDARD, BAKGROUND_STANDARD);
 	alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
-	emptyLine(' ',STANDARD_BOX_SIZE,TEXT_STANDARD, BAKGROUND_STANDARD);	
+	emptyLine(' ',STANDARD_BOX_SIZE,TEXT_STANDARD, BAKGROUND_STANDARD);
+	sleep(2);
 }
 
-/*Ecrãs estaticos*/
+/*Ecrï¿½s estaticos*/
 void renderCreditos(void){
 	clearScreen();
 	verticalPadding(VERTICAL_PADDING_STANDARD);
@@ -604,12 +626,12 @@ void renderCreditos(void){
 	
 	char ta[8][100];
 	sprintf(ta[0],"Alunos:");
-	sprintf(ta[1],"Jackson Barreto nº 24031");
-	sprintf(ta[2],"Leonardo Lopez nº 18278");
+	sprintf(ta[1],"Jackson Barreto nï¿½ 24031");
+	sprintf(ta[2],"Leonardo Lopez nï¿½ 18278");
 	sprintf(ta[3],"Professores:");
 	sprintf(ta[4],"Pedro Coutinho");
 	sprintf(ta[5],"Estrela Cruz");
-	sprintf(ta[6],"Programação 1 - Jogo do Trivia (Adaptado)");
+	sprintf(ta[6],"Programaï¿½ï¿½o 1 - Jogo do Trivia (Adaptado)");
 	sprintf(ta[7],"2019-2020");
     int jumpControlAtBottom = 0;
     const int someDelay = 500000;
