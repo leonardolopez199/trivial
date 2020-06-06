@@ -442,8 +442,8 @@ void rendersHistory(NODE ** history)
 {
 	char messageEmptyList[] = "Infelizmente nenhum jogador ainda se aventurou no fantï¿½stico mundo do TRIVIAL. Que tal vocï¿½ comeï¿½ar esta proeza!?";
 	char * userLine = (char * ) allocateMemory(MAX_NICKNAME_SIZE+10,sizeof(char));
-	USER temporaryUser; //apagar casou use o vetor de users
-	//USER * playerList = (USER *) allocateMemory(settings.historySize,sizeof(USER));
+	//USER temporaryUser; //apagar casou use o vetor de users
+	USER * playerList = (USER *) allocateMemory(settings.historySize,sizeof(USER)); //para listagem não ordenada
 	CONTROLINT i;
 	
 	clearScreen();
@@ -467,14 +467,15 @@ void rendersHistory(NODE ** history)
 		
 		for(i=0;i<settings.historySize;i++)
 		{
-			/*
+			
 			historyForPrint(historyPlayers,playerList,settings.historySize);
 			sprintf(userLine,"%d - %s",i+1,playerList[i].nickname);	
-			*/
+			/*
 			temporaryUser = returnsLastPlayersOneByOne(history);	
 			sprintf(userLine,"%d - %s",i+1,temporaryUser.nickname);				
 			alignmentPadding(STANDARD_BOX_SIZE,ALIGN_CENTER);
 			lineTitle(' ',' ',STANDARD_BOX_SIZE,ALIGN_LEFT,userLine,TEXT_STANDARD,BAKGROUND_STANDARD);
+			*/
 		}		
 	}
 	else
